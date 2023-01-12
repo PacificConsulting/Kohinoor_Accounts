@@ -6,7 +6,6 @@ tableextension 50000 "Gen Journal Line Ext" extends "Gen. Journal Line"
         {
             Caption = 'Payment Category';
             OptionMembers = " ",Regular,Advance;
-            //OptionCaption = ''', Regular, Advance';
 
         }
     }
