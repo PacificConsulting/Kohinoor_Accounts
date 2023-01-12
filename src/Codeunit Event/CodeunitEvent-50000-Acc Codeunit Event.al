@@ -11,55 +11,55 @@ codeunit 50000 "Account Codeunit Event"
     var
         GenNarration: Record 18550;
     begin
-        IF GenJournalLine."Journal Template Name" = 'BANKPYMTV' then begin
+        IF (GenJournalLine."Journal Template Name" = 'BANKPYMTV') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'BANKRCPTV' then begin
+        IF (GenJournalLine."Journal Template Name" = 'BANKRCPTV') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'CASHPYMTV' then begin
+        IF (GenJournalLine."Journal Template Name" = 'CASHPYMTV') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'CASHRCPT' then begin
+        IF (GenJournalLine."Journal Template Name" = 'CASHRCPT') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'CASHRCPTV' then begin
+        IF (GenJournalLine."Journal Template Name" = 'CASHRCPTV') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'CONTRAV' then begin
+        IF (GenJournalLine."Journal Template Name" = 'CONTRAV') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'GENERAL' then begin
+        IF (GenJournalLine."Journal Template Name" = 'GENERAL') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'JOURNALV' then begin
+        IF (GenJournalLine."Journal Template Name" = 'JOURNALV') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
         end;
-        IF GenJournalLine."Journal Template Name" = 'PAYMENT' then begin
+        IF (GenJournalLine."Journal Template Name" = 'PAYMENT') And (GenJournalLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
             if not GenNarration.FindFirst() then
@@ -73,11 +73,17 @@ codeunit 50000 "Account Codeunit Event"
     local procedure OnBeforePostSalesDoc(var SalesHeader: Record "Sales Header"; CommitIsSuppressed: Boolean; PreviewMode: Boolean; var HideProgressWindow: Boolean; var IsHandled: Boolean)
     var
         SalesCommentLine: Record 44;
+        salesLine: record 37;
     begin
-        SalesCommentLine.Reset();
-        SalesCommentLine.SetRange("No.", SalesHeader."No.");
-        if not SalesCommentLine.FindFirst() then
-            Error('Comment is Mandatory for current Docuemnt No. %1 ', SalesHeader."No.");
+        SalesLine.reset;
+        Salesline.Setrange("Document No.", SalesHeader."No.");
+        Salesline.SetFilter(Amount, '<>%1', 0);
+        IF not Salesline.IsEmpty then begin
+            SalesCommentLine.Reset();
+            SalesCommentLine.SetRange("No.", SalesHeader."No.");
+            if not SalesCommentLine.FindFirst() then
+                Error('Comment is Mandatory for current Docuemnt No. %1 ', SalesHeader."No.");
+        end;
     end;
     //END***************CU 80****************************
 
@@ -86,11 +92,17 @@ codeunit 50000 "Account Codeunit Event"
     local procedure OnBeforePostPurchaseDoc(var PurchaseHeader: Record "Purchase Header"; PreviewMode: Boolean; CommitIsSupressed: Boolean; var HideProgressWindow: Boolean; var ItemJnlPostLine: Codeunit "Item Jnl.-Post Line"; var IsHandled: Boolean)
     var
         PurchCommentLine: Record 43;
+        PurchLine:Record 39;
     begin
+        PurchLine.reset;
+        PurchLine.Setrange("Document No.", PurchaseHeader."No.");
+        PurchLine.SetFilter(Amount, '<>%1', 0);
+        IF not PurchLine.IsEmpty then begin
         PurchCommentLine.Reset();
         PurchCommentLine.SetRange("No.", PurchaseHeader."No.");
         If not PurchCommentLine.FindFirst() then
             Error('Comment is Mandatory for current Docuemnt No. %1 ', PurchaseHeader."No.");
+        end;
     end;
     //END*****************CU 90***************************
 
@@ -98,7 +110,7 @@ codeunit 50000 "Account Codeunit Event"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post (Yes/No)", 'OnBeforeOnRun', '', false, false)]
     local procedure OnBeforeOnRun(var PurchaseHeader: Record "Purchase Header")
     begin
-          IF PurchaseHeader."Document Type" = PurchaseHeader."Document Type"::Invoice then
+        IF PurchaseHeader."Document Type" = PurchaseHeader."Document Type"::Invoice then
             Message('Please check whether to apply Advance Payment on this Purchase Invoice');
     end;
     //END*****************CU 91***************************
