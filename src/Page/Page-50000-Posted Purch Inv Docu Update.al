@@ -3,7 +3,8 @@ page 50000 "Posted Purch Inv Data Update"
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Administration;
-    Permissions = tabledata 122 = rm;
+    Permissions = tabledata 122 = rm, tabledata 380 = rm, tabledata "Vendor Ledger Entry" = rm;
+
 
     layout
     {
@@ -59,29 +60,19 @@ page 50000 "Posted Purch Inv Data Update"
             {
                 ApplicationArea = All;
                 Image = UpdateDescription;
-                Promoted = true;
-                PromotedIsBig = true;
                 trigger OnAction()
                 begin
+                    IF Not Confirm('Do you want to update the data', true) then
+                        exit;
+
+                    if "Document No" = '' then
+                        Error('Please select the New Document No.');
                     IF NewDocumentDate = 0D then
                         Error('Please select the New Document Date');
                     if NewVendorInvoiceNo = '' then
                         Error('New Vendor Invoice No. should not be blank');
 
-                    PurchInvoiceHeader.Reset();
-                    PurchInvoiceHeader.SetRange("No.", "Document No");
-                    if PurchInvoiceHeader.FindFirst() then begin
-                        PurchInvoiceHeader."Vendor Invoice No." := NewVendorInvoiceNo;
-                        PurchInvoiceHeader."Document Date" := NewDocumentDate;
-                        PurchInvoiceHeader.Modify();
-                    end;
-                    VendorLedEntry.Reset();
-                    VendorLedEntry.SetRange("Document No.", "Document No");
-                    if VendorLedEntry.FindFirst() then begin
-                        VendorLedEntry."External Document No." := NewVendorInvoiceNo;
-                        VendorLedEntry."Document Date" := NewDocumentDate;
-                        VendorLedEntry.Modify();
-                    End;
+                    DataUpdate();
                     Message('Data Updated Successfully.....');
                     ClearData();
 
@@ -99,6 +90,47 @@ page 50000 "Posted Purch Inv Data Update"
         Clear(OldVendorInvoiceNo);
     End;
 
+    procedure DataUpdate()
+    Begin
+        PurchInvoiceHeader.Reset();
+        PurchInvoiceHeader.SetRange("No.", "Document No");
+        if PurchInvoiceHeader.FindFirst() then begin
+            PurchInvoiceHeader."Vendor Invoice No." := NewVendorInvoiceNo;
+            PurchInvoiceHeader."Document Date" := NewDocumentDate;
+            PurchInvoiceHeader.Modify();
+        end;
+
+        // Due Date Update on Purch Inv and vend Ledger and Detailed Vend Ledger Entry. 
+        if (PurchInvoiceHeader."Payment Terms Code" <> '') and (PurchInvoiceHeader."Document Date" <> 0D) then begin
+            PaymentTerms.Get(PurchInvoiceHeader."Payment Terms Code");
+            PurchInvoiceHeader."Due Date" := CalcDate(PaymentTerms."Due Date Calculation", PurchInvoiceHeader."Document Date");
+            PurchInvoiceHeader."Pmt. Discount Date" := CalcDate(PaymentTerms."Discount Date Calculation", PurchInvoiceHeader."Document Date");
+            PurchInvoiceHeader."Payment Discount %" := PaymentTerms."Discount %";
+            PurchInvoiceHeader.Modify();
+        end else begin
+            PurchInvoiceHeader.Validate("Due Date", PurchInvoiceHeader."Document Date");
+            PurchInvoiceHeader.Validate("Pmt. Discount Date", 0D);
+            PurchInvoiceHeader.Validate("Payment Discount %", 0);
+            PurchInvoiceHeader.Modify();
+        end;
+
+        VendorLedEntry.Reset();
+        VendorLedEntry.SetRange("Document No.", "Document No");
+        if VendorLedEntry.FindFirst() then begin
+            VendorLedEntry."External Document No." := NewVendorInvoiceNo;
+            VendorLedEntry."Document Date" := NewDocumentDate;
+            VendorLedEntry."Due Date" := PurchInvoiceHeader."Due Date";
+            VendorLedEntry.Modify();
+        End;
+        DetailedVLE.Reset();
+        DetailedVLE.SetRange("Document No.", "Document No");
+        IF DetailedVLE.FindFirst() then begin
+            DetailedVLE."Initial Entry Due Date" := PurchInvoiceHeader."Due Date";
+            DetailedVLE.Modify();
+        end;
+
+    End;
+
     var
         "Document No": Code[20];
         OldVendorInvoiceNo: Code[35];
@@ -107,4 +139,7 @@ page 50000 "Posted Purch Inv Data Update"
         NewDocumentDate: Date;
         PurchInvoiceHeader: Record 122;
         VendorLedEntry: Record "Vendor Ledger Entry";
+        PaymentTerms: Record "Payment Terms";
+        DetailedVLE: record "Detailed Vendor Ledg. Entry";
+        DialogBox: Dialog;
 }
