@@ -48,13 +48,13 @@
       "version": "18.2.26217.26490"
     },
     {
-      "appId": "1150dd8d-51da-485a-bd4a-1ee98d78c21a",
+      "id": "1150dd8d-51da-485a-bd4a-1ee98d78c21a",
       "publisher": "Microsoft",
       "name": "Fixed Asset Depreciation for India",
       "version": "18.2.26217.26490"
     },
     {
-      "appId": "f1d9b696-156b-4251-b542-34e549fa80e9",
+      "id": "f1d9b696-156b-4251-b542-34e549fa80e9",
       "publisher": "Microsoft",
       "name": "India Voucher Interface",
       "version": "18.2.26217.26490"
