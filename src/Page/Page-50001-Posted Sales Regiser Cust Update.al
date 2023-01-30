@@ -68,7 +68,7 @@ page 50001 "Posted Sales GST Update"
             {
                 ApplicationArea = All;
                 Image = UpdateDescription;
-                Visible = VisibleField;
+                //Visible = VisibleField;
                 trigger OnAction()
                 begin
                     IF Not Confirm('Do you want to update the data', true) then
@@ -77,6 +77,9 @@ page 50001 "Posted Sales GST Update"
 
                     IF "Document No" = '' then
                         Error('Please select the New Document No.');
+
+                    IF (GSTRegNo = '') OR (GSTCustType = GSTCustType::" ") then
+                        Error('Data will not update due GST Register No. or GST customer type not updated on customer card');
 
 
                     DataUpdate();
