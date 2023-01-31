@@ -99,6 +99,8 @@ page 50001 "Posted Sales GST Update"
             IF Customer.get(SalesInvHeader."Sell-to Customer No.") then;
             SalesInvHeader."Nature of Supply" := SalesInvHeader."Nature of Supply"::B2B;
             SalesInvHeader."GST Customer Type" := Customer."GST Customer Type";
+            SalesInvHeader."Customer GST Reg. No." := Customer."GST Registration No.";
+            
             SalesInvHeader.Modify();
         end;
 
@@ -110,6 +112,16 @@ page 50001 "Posted Sales GST Update"
                 DGLE."Buyer/Seller Reg. No." := Customer."GST Registration No.";
                 DGLE.Modify();
             until DGLE.Next() = 0;
+
+        CLE.Reset();
+        CLE.SetRange("Document No.", "Document No");
+        CLE.SetRange("Document Type", CLE."Document Type"::Invoice);
+        IF CLE.FindSet() then
+            repeat
+                CLE."Seller GST Reg. No." := Customer."GST Registration No.";
+                CLE."GST Customer Type" := Customer."GST Customer Type";
+                CLE.Modify();
+            until CLE.Next() = 0;
     end;
 
     trigger OnAfterGetRecord()
@@ -139,4 +151,5 @@ page 50001 "Posted Sales GST Update"
         Customer: Record 18;
         NewDate: Date;
         PostingDate: Date;
+        CLE: record 21;
 }
