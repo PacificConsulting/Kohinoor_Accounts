@@ -6,64 +6,64 @@ codeunit 50000 "Account Codeunit Event"
     end;
 
     //START***************CU 12**************************
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Gen. Jnl.-Post Line", 'OnBeforeRunWithCheck', '', false, false)]
-    local procedure OnBeforeRunWithCheck(var GenJournalLine: Record "Gen. Journal Line"; var GenJournalLine2: Record "Gen. Journal Line");
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Gen. Jnl.-Post", 'OnCodeOnAfterCheckTemplate', '', false, false)]
+    local procedure OnCodeOnAfterCheckTemplate(var GenJnlLine: Record "Gen. Journal Line")
     var
         GenNarration: Record 18550;
     begin
-        IF (GenJournalLine."Journal Template Name" = 'BANKPYMTV') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'BANKPYMTV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'BANKRCPTV') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'BANKRCPTV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'CASHPYMTV') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'CASHPYMTV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'CASHRCPT') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'CASHRCPT') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'CASHRCPTV') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'CASHRCPTV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'CONTRAV') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'CONTRAV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'GENERAL') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'GENERAL') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'JOURNALV') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'JOURNALV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
-        IF (GenJournalLine."Journal Template Name" = 'PAYMENT') And (GenJournalLine.Amount <> 0) then begin
+        IF (GenJnlLine."Journal Template Name" = 'PAYMENT') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJournalLine."Document No.");
+            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
             if not GenNarration.FindFirst() then
-                Error('Line Narration is Mandatory for current document No. %1', GenJournalLine."Document No.");
+                Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
     end;
     //END***************CU 12****************************
@@ -92,16 +92,16 @@ codeunit 50000 "Account Codeunit Event"
     local procedure OnBeforePostPurchaseDoc(var PurchaseHeader: Record "Purchase Header"; PreviewMode: Boolean; CommitIsSupressed: Boolean; var HideProgressWindow: Boolean; var ItemJnlPostLine: Codeunit "Item Jnl.-Post Line"; var IsHandled: Boolean)
     var
         PurchCommentLine: Record 43;
-        PurchLine:Record 39;
+        PurchLine: Record 39;
     begin
         PurchLine.reset;
         PurchLine.Setrange("Document No.", PurchaseHeader."No.");
         PurchLine.SetFilter(Amount, '<>%1', 0);
         IF not PurchLine.IsEmpty then begin
-        PurchCommentLine.Reset();
-        PurchCommentLine.SetRange("No.", PurchaseHeader."No.");
-        If not PurchCommentLine.FindFirst() then
-            Error('Comment is Mandatory for current Docuemnt No. %1 ', PurchaseHeader."No.");
+            PurchCommentLine.Reset();
+            PurchCommentLine.SetRange("No.", PurchaseHeader."No.");
+            If not PurchCommentLine.FindFirst() then
+                Error('Comment is Mandatory for current Docuemnt No. %1 ', PurchaseHeader."No.");
         end;
     end;
     //END*****************CU 90***************************
