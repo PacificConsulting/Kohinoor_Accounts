@@ -11,6 +11,7 @@ codeunit 50000 "Account Codeunit Event"
     var
         GenNarration: Record 18550;
     begin
+
         IF (GenJnlLine."Journal Template Name" = 'BANKPYMTV') And (GenJnlLine.Amount <> 0) then begin
             GenNarration.Reset();
             GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
@@ -48,9 +49,10 @@ codeunit 50000 "Account Codeunit Event"
                 Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
         IF (GenJnlLine."Journal Template Name" = 'GENERAL') And (GenJnlLine.Amount <> 0) then begin
-            GenNarration.Reset();
-            GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
-            if not GenNarration.FindFirst() then
+            // GenNarration.Reset();
+            // GenNarration.SetRange("Document No.", GenJnlLine."Document No.");
+            // if not GenNarration.FindFirst() then
+            IF GenJnlLine.Comment = '' then
                 Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
         IF (GenJnlLine."Journal Template Name" = 'JOURNALV') And (GenJnlLine.Amount <> 0) then begin
@@ -65,7 +67,9 @@ codeunit 50000 "Account Codeunit Event"
             if not GenNarration.FindFirst() then
                 Error('Line Narration is Mandatory for current document No. %1', GenJnlLine."Document No.");
         end;
+
     end;
+
     //END***************CU 12****************************
 
     //START***************CU 80**************************
@@ -75,15 +79,15 @@ codeunit 50000 "Account Codeunit Event"
         SalesCommentLine: Record 44;
         salesLine: record 37;
     begin
-        SalesLine.reset;
-        Salesline.Setrange("Document No.", SalesHeader."No.");
-        Salesline.SetFilter(Amount, '<>%1', 0);
-        IF not Salesline.IsEmpty then begin
-            SalesCommentLine.Reset();
-            SalesCommentLine.SetRange("No.", SalesHeader."No.");
-            if not SalesCommentLine.FindFirst() then
-                Error('Comment is Mandatory for current Docuemnt No. %1 ', SalesHeader."No.");
-        end;
+        // SalesLine.reset;
+        // Salesline.Setrange("Document No.", SalesHeader."No.");
+        // Salesline.SetFilter(Amount, '<>%1', 0);
+        // IF not Salesline.IsEmpty then begin
+        //     SalesCommentLine.Reset();
+        //     SalesCommentLine.SetRange("No.", SalesHeader."No.");
+        //     if not SalesCommentLine.FindFirst() then
+        //         Error('Comment is Mandatory for current Docuemnt No. %1 ', SalesHeader."No.");
+        // end;
     end;
     //END***************CU 80****************************
 
@@ -94,15 +98,15 @@ codeunit 50000 "Account Codeunit Event"
         PurchCommentLine: Record 43;
         PurchLine: Record 39;
     begin
-        PurchLine.reset;
-        PurchLine.Setrange("Document No.", PurchaseHeader."No.");
-        PurchLine.SetFilter(Amount, '<>%1', 0);
-        IF not PurchLine.IsEmpty then begin
-            PurchCommentLine.Reset();
-            PurchCommentLine.SetRange("No.", PurchaseHeader."No.");
-            If not PurchCommentLine.FindFirst() then
-                Error('Comment is Mandatory for current Docuemnt No. %1 ', PurchaseHeader."No.");
-        end;
+        // PurchLine.reset;
+        // PurchLine.Setrange("Document No.", PurchaseHeader."No.");
+        // PurchLine.SetFilter(Amount, '<>%1', 0);
+        // IF not PurchLine.IsEmpty then begin
+        //     PurchCommentLine.Reset();
+        //     PurchCommentLine.SetRange("No.", PurchaseHeader."No.");
+        //     If not PurchCommentLine.FindFirst() then
+        //         Error('Comment is Mandatory for current Docuemnt No. %1 ', PurchaseHeader."No.");
+        // end;
     end;
     //END*****************CU 90***************************
 

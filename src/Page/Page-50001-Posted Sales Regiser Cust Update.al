@@ -14,7 +14,7 @@ page 50001 "Posted Sales GST Update"
                 field("Document No"; "Document No")
                 {
                     ApplicationArea = All;
-                    TableRelation = "Sales Invoice Header"."No.";
+                    TableRelation = "Sales Invoice Header"."No." where("Customer GST Reg. No." = filter(''));
                     trigger OnValidate()
                     var
                         SaleInvHeader: Record 112;
@@ -22,6 +22,7 @@ page 50001 "Posted Sales GST Update"
                     begin
                         SaleInvHeader.Reset();
                         SaleInvHeader.SetRange("No.", "Document No");
+                        SaleInvHeader.SetFilter("Customer GST Reg. No.", '%1', '');
                         if SaleInvHeader.FindFirst() then begin
                             CustomerNo := SaleInvHeader."Sell-to Customer No.";
                             PostingDate := SalesInvHeader."Posting Date";
@@ -30,14 +31,15 @@ page 50001 "Posted Sales GST Update"
                                 GSTCustType := Cust."GST Customer Type";
                             end;
                             IF Cust."GST Customer Type" = Cust."GST Customer Type"::Registered then
-                                VisibleField := true
+                                VisibleField := false
                             else
-                                VisibleField := false;
+                                VisibleField := true;
 
-                        end;
-                        NewDate := CalcDate('<1M>', SaleInvHeader."Posting Date");
-                        IF Today > NewDate then
-                            Error('You can not update the data beacuse this invoice is more than 30 days old');
+                            NewDate := CalcDate('<1M>', SaleInvHeader."Posting Date");
+                            IF Today > NewDate then
+                                Error('You can not update the data beacuse this invoice is more than 30 days old');
+                        end else
+                            Error('Given Document No. %1 GST Reg No already exist', "Document No");
                     end;
 
                 }
@@ -49,7 +51,7 @@ page 50001 "Posted Sales GST Update"
                 field("GST Registration No."; GSTRegNo)
                 {
                     ApplicationArea = all;
-                    Editable = false;
+                    Editable = VisibleField;
                 }
                 field("GST Customer Type"; GSTCustType)
                 {
@@ -86,7 +88,6 @@ page 50001 "Posted Sales GST Update"
                     Message('Data Updated Successfully.....');
 
 
-
                 end;
             }
         }
@@ -100,7 +101,6 @@ page 50001 "Posted Sales GST Update"
             SalesInvHeader."Nature of Supply" := SalesInvHeader."Nature of Supply"::B2B;
             SalesInvHeader."GST Customer Type" := Customer."GST Customer Type";
             SalesInvHeader."Customer GST Reg. No." := Customer."GST Registration No.";
-            
             SalesInvHeader.Modify();
         end;
 
@@ -129,9 +129,9 @@ page 50001 "Posted Sales GST Update"
         cust: Record 18;
     begin
         IF Cust."GST Customer Type" = Cust."GST Customer Type"::Registered then
-            VisibleField := true
+            VisibleField := false
         else
-            VisibleField := false;
+            VisibleField := true;
     end;
 
     trigger OnOpenPage()

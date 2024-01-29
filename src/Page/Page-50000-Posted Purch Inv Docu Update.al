@@ -25,7 +25,6 @@ page 50000 "Posted Purch Inv Data Update"
                         if PurchInvHeader.FindFirst() then begin
                             OldVendorInvoiceNo := PurchInvHeader."Vendor Invoice No.";
                             OldDocumentDate := PurchInvHeader."Document Date";
-
                         end;
                     end;
                 }
@@ -46,6 +45,18 @@ page 50000 "Posted Purch Inv Data Update"
                 field("New Document Date"; NewDocumentDate)
                 {
                     ApplicationArea = all;
+                    trigger OnValidate()
+                    var
+                        PurchInvHeader: Record 122;
+                    begin
+                        PurchInvHeader.Reset();
+                        PurchInvHeader.SetRange("No.", "Document No");
+                        if PurchInvHeader.FindFirst() then begin
+                            IF PurchInvHeader."Posting Date" < NewDocumentDate then
+                                Error('You can not add new document date greater then invoice posting date %1', PurchInvHeader."Posting Date");
+
+                        end;
+                    end;
                 }
 
             }
